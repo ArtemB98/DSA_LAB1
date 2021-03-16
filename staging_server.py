@@ -3,6 +3,7 @@
 """
 
 import socket
+import time
 import cv2
 import numpy as np
 import os
@@ -34,16 +35,16 @@ while True:
         client_socket, client_address = staging_server.accept()
 
         data1 = client_socket.recv(2048)
-        sizeOfImage1 = int(data1.decode('utf-16'))
+        sizeOfImage1 = int(data1.decode())
         print("Size of input image:", sizeOfImage1)
 
         # Принимаю картинку
         file = open('image_staging_server.png', mode="wb")  # открыть для записи принимаемой картинки файл
 
-        data1 = client_socket.recv(2048)
-        while data1:
-            file.write(data1)
-            data1 = client_socket.recv(2048)
+        while sizeOfImage1 > 0:
+            data = client_socket.recv(2048)
+            file.write(data)
+            sizeOfImage1 = sizeOfImage1 - 2048
 
         file.close()
 
@@ -65,7 +66,8 @@ while True:
 
         imageSize = os.path.getsize('image_staging_server_output.png')
         print("Size of output image:", imageSize)
-        staging_server2.send(f"{imageSize}".encode('utf-16'))
+        staging_server2.send(str(imageSize).encode())
+        time.sleep(0.1)
 
         while imageSize > 0:
             data = file.read(2048)

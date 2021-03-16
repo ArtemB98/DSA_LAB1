@@ -20,9 +20,8 @@ print("Server is listening", '\n')
 client_socket, client_address = server.accept()
 while True:
     try:
-
         data = client_socket.recv(2048)
-        sizeOfImage = int(data.decode('utf-16'))
+        sizeOfImage = int(data.decode())
         print("Size of input image:", sizeOfImage)
 
         # Принимаю картинку
